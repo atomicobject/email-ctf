@@ -31,6 +31,7 @@ To learn more about developing your project with Convex, check out:
 - The [Tour of Convex](https://docs.convex.dev/get-started) for a thorough introduction to Convex principles.
 - The rest of [Convex docs](https://docs.convex.dev/) to learn about all Convex features.
 - [Stack](https://stack.convex.dev/) for in-depth articles on advanced topics.
+- [Shadcn](https://ui.shadcn.com/docs/installation)
 
 ## Join the community
 
