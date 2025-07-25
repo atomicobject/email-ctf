@@ -4,6 +4,8 @@ import { useState } from "react";
 import LandingPage from "./LandingPage";
 import AuthForm from "./AuthForm";
 import ChallengesPage from "./ChallengesPage";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 type AppState = "landing" | "auth" | "challenges";
 type AuthMode = "signin" | "signup";
@@ -12,15 +14,17 @@ export default function Dashboard() {
   const [appState, setAppState] = useState<AppState>("landing");
   const [authMode, setAuthMode] = useState<AuthMode>("signup");
   const [user, setUser] = useState<{ email: string; username?: string } | null>(null);
+  const upsertUser = useMutation(api.myFunctions.upsertUser);
 
   const handleGetStarted = () => {
     setAppState("auth");
     setAuthMode("signup");
   };
 
-  const handleAuth = (email: string, username?: string) => {
+  const handleAuth = (email: string, username: string) => {
     setUser({ email, username });
     setAppState("challenges");
+    upsertUser({email, username});
   };
 
   const handleSignOut = () => {
@@ -45,7 +49,8 @@ export default function Dashboard() {
     return (
       <ChallengesPage
         onSignOut={handleSignOut}
-        username={user.username || user.email.split('@')[0]}
+        username={user.username!}
+        email={user.email}
       />
     );
   }

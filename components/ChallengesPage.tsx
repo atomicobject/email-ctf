@@ -17,6 +17,8 @@ import {
   Lock,
   Unlock
 } from "lucide-react";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 interface Challenge {
   id: number;
@@ -31,9 +33,10 @@ interface Challenge {
 interface ChallengesPageProps {
   onSignOut: () => void;
   username: string;
+  email: string;
 }
 
-export default function ChallengesPage({ onSignOut, username }: ChallengesPageProps) {
+export default function ChallengesPage({ onSignOut, username, email }: ChallengesPageProps) {
   const [challenges, setChallenges] = useState<Challenge[]>([
     {
       id: 1,
@@ -58,13 +61,14 @@ export default function ChallengesPage({ onSignOut, username }: ChallengesPagePr
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error" | "info">("info");
+  const sendChallenge1 = useMutation(api.sendEmails.sendChallenge1);
 
   const handleSendChallenge = async (challenge: Challenge) => {
     setIsLoading(true);
     setMessage("");
 
     // Simulate sending email
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await sendChallenge1({email, username});
     
     setMessage(`Challenge "${challenge.title}" sent to your email! Check your inbox.`);
     setMessageType("success");
