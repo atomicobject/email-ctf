@@ -1,23 +1,18 @@
 "use client";
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { User, Mail, LogIn, UserPlus, ArrowLeft } from "lucide-react";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
+import { User, Mail, LogIn, ArrowLeft } from "lucide-react";
 
 interface AuthFormProps {
-  mode: "signin" | "signup";
-  onToggleMode: () => void;
   onAuth: (email: string, username?: string) => void;
   onBackToHome?: () => void;
 }
 
-export default function AuthForm({ mode, onToggleMode, onAuth, onBackToHome }: AuthFormProps) {
+export default function AuthForm({ onAuth, onBackToHome }: AuthFormProps) {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -26,23 +21,17 @@ export default function AuthForm({ mode, onToggleMode, onAuth, onBackToHome }: A
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || (mode === "signup" && !username)) return;
+    if (!email || !username) return;
 
     setIsLoading(true);
     setMessage("");
 
     await new Promise(resolve => setTimeout(resolve, 1500));
     
-    if (mode === "signup") {
-      setMessage("Account created successfully! Check your email for the first challenge.");
-      setMessageType("success");
-      onAuth(email, username);
-    } else {
-      setMessage("Signed in successfully! Redirecting to challenges...");
-      setMessageType("success");
-      onAuth(email);
-    }
-    
+    setMessage("Signed in successfully! Redirecting to challenges...");
+    setMessageType("success");
+    onAuth(email, username);
+      
     setIsLoading(false);
   };
 
@@ -62,27 +51,19 @@ export default function AuthForm({ mode, onToggleMode, onAuth, onBackToHome }: A
               </Button>
             </div>
           )}
-          <div className="flex justify-center mb-4">
-            {mode === "signin" ? (
-              <LogIn className="h-12 w-12 text-gray-400" />
-            ) : (
-              <UserPlus className="h-12 w-12 text-gray-400" />
-            )}
-          </div>
+          
           <CardTitle className="text-2xl font-bold text-gray-100">
-            {mode === "signin" ? "Sign In" : "Create Account"}
+            {"Sign In"}
           </CardTitle>
           <CardDescription className="text-gray-400">
-            {mode === "signin" 
-              ? "Welcome back! Sign in to continue your CTF journey" 
-              : "Join the CTF challenge and test your email security skills"
+            {"Join the CTF challenge and test your email security skills"
             }
           </CardDescription>
         </CardHeader>
         
         <CardContent className="space-y-4">
           <form onSubmit={handleSubmit} className="space-y-4">
-            {mode === "signup" && (
+            {(
               <div className="space-y-2">
                 <Label htmlFor="username" className="text-gray-200">Username</Label>
                 <div className="relative">
@@ -119,24 +100,11 @@ export default function AuthForm({ mode, onToggleMode, onAuth, onBackToHome }: A
             <Button 
               type="submit" 
               className="w-full bg-gray-800 hover:bg-gray-700 text-white" 
-              disabled={isLoading || !email || (mode === "signup" && !username)}
+              disabled={isLoading || !email || !username}
             >
-              {isLoading ? "Processing..." : mode === "signin" ? "Sign In" : "Create Account & Send Challenge"}
+              {isLoading ? "Processing..." : "Let's go!"}
             </Button>
           </form>
-
-          <div className="text-center">
-            <button
-              onClick={onToggleMode}
-              className="text-sm text-gray-400 hover:text-gray-300 underline"
-              disabled={isLoading}
-            >
-              {mode === "signin" 
-                ? "Don't have an account? Sign up" 
-                : "Already have an account? Sign in"
-              }
-            </button>
-          </div>
 
           {message && (
             <Alert className={`${

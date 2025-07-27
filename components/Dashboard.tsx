@@ -8,17 +8,14 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
 type AppState = "landing" | "auth" | "challenges";
-type AuthMode = "signin" | "signup";
 
 export default function Dashboard() {
   const [appState, setAppState] = useState<AppState>("landing");
-  const [authMode, setAuthMode] = useState<AuthMode>("signup");
   const [user, setUser] = useState<{ email: string; username?: string } | null>(null);
   const upsertUser = useMutation(api.myFunctions.upsertUser);
 
   const handleGetStarted = () => {
     setAppState("auth");
-    setAuthMode("signup");
   };
 
   const handleAuth = (email: string, username: string) => {
@@ -30,15 +27,10 @@ export default function Dashboard() {
   const handleSignOut = () => {
     setUser(null);
     setAppState("landing");
-    setAuthMode("signin");
   };
 
   const handleBackToHome = () => {
     setAppState("landing");
-  };
-
-  const handleToggleAuthMode = () => {
-    setAuthMode(prev => prev === "signin" ? "signup" : "signin");
   };
 
   if (appState === "landing") {
@@ -57,8 +49,6 @@ export default function Dashboard() {
 
   return (
     <AuthForm
-      mode={authMode}
-      onToggleMode={handleToggleAuthMode}
       onAuth={handleAuth}
       onBackToHome={handleBackToHome}
     />

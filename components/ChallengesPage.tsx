@@ -145,7 +145,7 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
             <Flag className="h-8 w-8 text-gray-400" />
             <div>
               <h1 className="text-xl font-bold text-gray-100">Email CTF Platform</h1>
-              <p className="text-sm text-gray-400">Welcome back, {username}!</p>
+              <p className="text-sm text-gray-400">Welcome, {username}!</p>
             </div>
           </div>
           
