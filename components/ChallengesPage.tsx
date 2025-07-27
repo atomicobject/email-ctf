@@ -15,7 +15,8 @@ import {
   Trophy, 
   Target, 
   Lock,
-  Unlock
+  Unlock,
+  FlagTriangleRight
 } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -44,7 +45,7 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
       description: "Analyze the email headers to find the hidden flag. Look for suspicious routing information and authentication records.",
       category: "Headers",
       difficulty: "Easy",
-      completed: false
+      completed: true
     },
     {
       id: 2, 
@@ -168,7 +169,7 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
       <div className="max-w-6xl mx-auto p-6">
         {!selectedChallenge ? (
           <div className="space-y-6">
-            {/* Progress Overview */}
+            {/* Progress & Achievements Overview */}
             <Card className="bg-gray-950 border-gray-800">
               <CardHeader>
                 <CardTitle className="text-gray-100 flex items-center gap-2">
@@ -176,48 +177,72 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
                   Your Progress
                 </CardTitle>
                 <CardDescription className="text-gray-400">
-                  Track your CTF journey and improve your email security skills
+                  Track your CTF journey and unlock achievements
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-gray-900 p-4 rounded-lg border border-gray-800">
-                    <div className="flex items-center gap-2 text-gray-300 mb-2">
-                      <CheckCircle className="h-4 w-4" />
-                      <span className="font-semibold">Completed</span>
-                    </div>
-                    <div className="text-2xl font-bold text-gray-100">{completedCount}</div>
-                  </div>
-                  <div className="bg-gray-900 p-4 rounded-lg border border-gray-800">
-                    <div className="flex items-center gap-2 text-gray-300 mb-2">
-                      <Target className="h-4 w-4" />
-                      <span className="font-semibold">Progress</span>
-                    </div>
+              <CardContent className="space-y-6">
+                {/* Progress Stats */}
+                <div className="bg-gray-900 p-4 rounded-lg border border-gray-800">
+                  <div className="flex items-center justify-between mb-3">
                     <div className="text-lg font-bold text-gray-100">
-                      {completedCount === 0 ? "Getting Started" : 
-                       completedCount === challenges.length ? "All Complete!" : "In Progress"}
+                      {completedCount}/{challenges.length} Challenges Completed!
+                    </div>
+                  </div>
+                  <div className="w-full bg-gray-800 rounded-full h-2 relative">
+                    <div 
+                      className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${(completedCount / challenges.length) * 100}%` }}
+                    ></div>
+                    <div 
+                      className="absolute top-1/2 transform -translate-y-1/2 transition-all duration-300"
+                      style={{ left: `${(completedCount / challenges.length) * 100}%` }}
+                    >
+                      <FlagTriangleRight className="h-4 w-4 text-gray-400" />
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Achievement/Leaderboard Placeholder */}
-            <Card className="bg-gray-950 border-gray-800">
-              <CardHeader>
-                <CardTitle className="text-gray-100">🏆 Achievements & Rewards</CardTitle>
-                <CardDescription className="text-gray-400">
-                  Future implementation: Leaderboard, badges, and progress tracking will be added here
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center">
-                  <Trophy className="h-12 w-12 text-gray-600 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-400 mb-2">Coming Soon</h3>
-                  <p className="text-gray-500">
-                    This space is reserved for implementing user achievements, leaderboards, 
-                    and visual progress indicators to make the CTF experience more engaging.
-                  </p>
+                {/* Achievements */}
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-200 mb-3 flex items-center gap-2">
+                    <Trophy className="h-5 w-5" />
+                    Achievements
+                  </h4>
+                  <div className="flex gap-4 justify-center">
+                    {/* Achievement Card 1 */}
+                    <div className={`rounded-lg p-4 text-center min-w-[120px] transition-all duration-300 ${
+                      challenges[0].completed 
+                        ? 'bg-yellow-900/20 border-yellow-600 shadow-lg shadow-yellow-500/20' 
+                        : 'bg-gray-900 border border-gray-800'
+                    }`}>
+                      <div className={`text-2xl font-bold mb-2 ${
+                        challenges[0].completed ? 'text-yellow-300' : 'text-gray-300'
+                      }`}>Quippy Name</div>
+                      <Trophy className={`h-8 w-8 mx-auto mb-2 ${
+                        challenges[0].completed ? 'text-yellow-400' : 'text-gray-600'
+                      }`} />
+                      <div className={`text-xs ${
+                        challenges[0].completed ? 'text-yellow-200' : 'text-gray-500'
+                      }`}>Header Analysis</div>
+                    </div>
+                    
+                    {/* Achievement Card 2 */}
+                    <div className={`rounded-lg p-4 text-center min-w-[120px] transition-all duration-300 ${
+                      challenges[1].completed 
+                        ? 'bg-yellow-900/20 border-yellow-600 shadow-lg shadow-yellow-500/20' 
+                        : 'bg-gray-900 border border-gray-800'
+                    }`}>
+                      <div className={`text-2xl font-bold mb-2 ${
+                        challenges[1].completed ? 'text-yellow-300' : 'text-gray-300'
+                      }`}>Return to Sender</div>
+                      <Trophy className={`h-8 w-8 mx-auto mb-2 ${
+                        challenges[1].completed ? 'text-yellow-400' : 'text-gray-600'
+                      }`} />
+                      <div className={`text-xs ${
+                        challenges[1].completed ? 'text-yellow-200' : 'text-gray-500'
+                      }`}>Phishing Detection</div>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
