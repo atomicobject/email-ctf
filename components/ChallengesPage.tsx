@@ -39,6 +39,7 @@ interface ChallengesPageProps {
 
 export default function ChallengesPage({ onSignOut, username, email }: ChallengesPageProps) {
   const user = useQuery(api.myFunctions.getUser, {username, email});
+  const completeChallenge = useMutation(api.myFunctions.completeChallenge);
   const challenges = [
     {
       id: 1,

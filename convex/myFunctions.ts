@@ -52,3 +52,28 @@ export const getUser = query({
     return user;
   }
 })
+
+
+export const completeChallenge = mutation({
+  args: {
+    email: v.string(),
+    username: v.string(),
+    flagNumber: v.number(),
+    flag: v.string()
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.runQuery(api.myFunctions.getUser, {
+      email: args.email,
+      username: args.username
+    });
+    const flag = await ctx.db.query("flags").filter(q => q.eq(q.field("challengeNumber"), args.flagNumber)).unique();
+    if (!flag) throw new Error("Invalid flag number");
+    if (flag.flag !== args.flag) return false;
+    // at this point, the flag is correct
+    await ctx.db.patch(user._id, {
+      challenge1: user.challenge1 ||flag.challengeNumber === 1,
+      challenge2: user.challenge2 || flag.challengeNumber === 2 
+    });
+    return true;
+  }
+})
