@@ -21,10 +21,14 @@ export default function Dashboard() {
     setAppState("auth");
   };
 
-  const handleAuth = (email: string, username: string) => {
-    setUser({ email, username });
-    setAppState("challenges");
-    upsertUser({email, username});
+  const handleAuth = async (email: string, username: string) => {
+    try {
+      await upsertUser({email, username});
+      setUser({ email, username });
+      setAppState("challenges");
+    } catch (error) {
+      throw error; // Re-throw to be handled by the AuthForm
+    }
   };
 
   const handleSignOut = () => {

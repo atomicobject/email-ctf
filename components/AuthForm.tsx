@@ -8,7 +8,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { User, Mail, ArrowLeft } from "lucide-react";
 
 interface AuthFormProps {
-  onAuth: (email: string, username: string) => void;
+  onAuth: (email: string, username: string) => Promise<void>;
   onBackToHome?: () => void;
 }
 
@@ -26,13 +26,21 @@ export default function AuthForm({ onAuth, onBackToHome }: AuthFormProps) {
     setIsLoading(true);
     setMessage("");
 
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setMessage("Signed in successfully! Redirecting to challenges...");
-    setMessageType("success");
-    onAuth(email, username);
+    try {
+      setMessage("Processing authentication...");
+      setMessageType("info");
       
-    setIsLoading(false);
+      // Await the onAuth function which handles the actual authentication
+      await onAuth(email, username);
+      
+      setMessage("Signed in successfully! Redirecting to challenges...");
+      setMessageType("success");
+    } catch (error) {
+      setMessage("Authentication failed. Please try again.");
+      setMessageType("error");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
