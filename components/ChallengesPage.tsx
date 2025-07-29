@@ -182,33 +182,8 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                {/* Progress Stats */}
-                <div className="bg-gray-900 p-4 rounded-lg border border-gray-800">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="text-lg font-bold text-gray-100">
-                      {completedCount}/{challenges.length} Challenges Completed!
-                    </div>
-                  </div>
-                  <div className="w-full bg-gray-800 rounded-full h-2 relative">
-                    <div 
-                      className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${(completedCount / challenges.length) * 100}%` }}
-                    ></div>
-                    <div 
-                      className="absolute top-1/2 transform -translate-y-1/2 transition-all duration-300"
-                      style={{ left: `${(completedCount / challenges.length) * 100}%` }}
-                    >
-                      <FlagTriangleRight className="h-4 w-4 text-gray-400" />
-                    </div>
-                  </div>
-                </div>
-
                 {/* Achievements */}
                 <div>
-                  <h4 className="text-lg font-semibold text-gray-200 mb-3 flex items-center gap-2">
-                    <Trophy className="h-5 w-5" />
-                    Achievements
-                  </h4>
                   <div className="flex gap-4 justify-center">
                     {/* Achievement Card 1 */}
                     <div className={`rounded-lg p-4 text-center min-w-[120px] transition-all duration-300 ${
@@ -245,6 +220,28 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
                     </div>
                   </div>
                 </div>
+                {/* Progress Stats */}
+                <div className="bg-gray-900 p-4 rounded-lg border border-gray-800">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="text-lg font-bold text-gray-100">
+                      {completedCount}/{challenges.length} Challenges Completed!
+                    </div>
+                  </div>
+                  <div className="w-full bg-gray-800 rounded-full h-2 relative">
+                    <div 
+                      className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${(completedCount / challenges.length) * 100}%` }}
+                    ></div>
+                    <div 
+                      className="absolute top-1/2 transform -translate-y-1/2 transition-all duration-300"
+                      style={{ left: `${(completedCount / challenges.length) * 100}%` }}
+                    >
+                      <FlagTriangleRight className="h-4 w-4 text-gray-400" />
+                    </div>
+                  </div>
+                </div>
+
+                
               </CardContent>
             </Card>
 
