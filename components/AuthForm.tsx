@@ -5,10 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { User, Mail, LogIn, ArrowLeft } from "lucide-react";
+import { User, Mail, ArrowLeft } from "lucide-react";
 
 interface AuthFormProps {
-  onAuth: (email: string, username?: string) => void;
+  onAuth: (email: string, username: string) => void;
   onBackToHome?: () => void;
 }
 

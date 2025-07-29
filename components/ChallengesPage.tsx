@@ -18,7 +18,7 @@ import {
   Unlock,
   FlagTriangleRight
 } from "lucide-react";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 
 interface Challenge {
@@ -38,14 +38,15 @@ interface ChallengesPageProps {
 }
 
 export default function ChallengesPage({ onSignOut, username, email }: ChallengesPageProps) {
-  const [challenges, setChallenges] = useState<Challenge[]>([
+  const user = useQuery(api.myFunctions.getUser, {username, email});
+  const challenges = [
     {
       id: 1,
       title: "Email Header Analysis",
       description: "Analyze the email headers to find the hidden flag. Look for suspicious routing information and authentication records.",
       category: "Headers",
       difficulty: "Easy",
-      completed: true
+      completed: user?.challenge1 ?? false
     },
     {
       id: 2, 
@@ -53,9 +54,9 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
       description: "Identify the phishing indicators in this deceptive email. Check the sender authentication and find the concealed flag.",
       category: "Phishing",
       difficulty: "Medium",
-      completed: false
+      completed: user?.challenge2 ?? false
     }
-  ]);
+  ];
 
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null);
   const [answer, setAnswer] = useState("");
@@ -89,9 +90,9 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
     const isCorrect = answer.toLowerCase().includes("ctf") || answer.toLowerCase().includes("flag");
     
     if (isCorrect) {
-      setChallenges(prev => prev.map(c => 
-        c.id === selectedChallenge.id ? { ...c, completed: true, flag: answer } : c
-      ));
+      // setChallenges(prev => prev.map(c => 
+      //   c.id === selectedChallenge.id ? { ...c, completed: true, flag: answer } : c
+      // ));
       setMessage("🎉 Correct! Challenge completed successfully!");
       setMessageType("success");
       setAnswer("");
@@ -100,7 +101,7 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
       const nextChallenge = challenges.find(c => c.id > selectedChallenge.id && !c.completed);
       if (nextChallenge) {
         setTimeout(() => {
-          setSelectedChallenge(nextChallenge);
+          // setSelectedChallenge(nextChallenge);
           setMessage("");
         }, 2000);
       } else {
@@ -275,7 +276,7 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
                       
                       <div className="flex items-center gap-2">
                         <Button
-                          onClick={() => handleSendChallenge(challenge)}
+                          onClick={() => handleSendChallenge(challenge as Challenge)}
                           disabled={isLoading}
                           className="bg-gray-800 hover:bg-gray-700 text-white"
                         >

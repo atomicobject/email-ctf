@@ -38,3 +38,17 @@ export const upsertUser = mutation({
     });
   }
 })
+
+
+export const getUser = query({
+  args: {
+    username: v.string(),
+    email: v.string()
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db.query("users").filter(q => q.eq(q.field("email"), args.email)).unique();
+    if (!user) throw new Error("User not found");
+    if (user.username !== args.username) throw new Error("Username is not associated with specified email address.");
+    return user;
+  }
+})

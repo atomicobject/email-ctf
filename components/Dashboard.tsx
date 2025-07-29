@@ -11,7 +11,10 @@ type AppState = "landing" | "auth" | "challenges";
 
 export default function Dashboard() {
   const [appState, setAppState] = useState<AppState>("landing");
-  const [user, setUser] = useState<{ email: string; username?: string } | null>(null);
+  const [user, setUser] = useState<{ email: string; username?: string } | null>({
+    email: "",
+    username: ""
+  });
   const upsertUser = useMutation(api.myFunctions.upsertUser);
 
   const handleGetStarted = () => {
