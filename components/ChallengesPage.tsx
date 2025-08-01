@@ -65,15 +65,16 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error" | "info">("info");
-  const sendChallenge1 = useMutation(api.sendEmails.sendChallenge1);
+  const sendChallenge = useMutation(api.sendEmails.sendChallenge);
+  const completeChallenge = useMutation(api.myFunctions.completeChallenge);
 
   const handleSendChallenge = async (challenge: Challenge) => {
     setIsLoading(true);
     setMessage("");
 
     // Simulate sending email
-    await sendChallenge1({email, username});
-    
+    await sendChallenge({email, username, challengeNumber: challenge.id});
+
     setMessage(`Challenge "${challenge.title}" sent to your email! Check your inbox.`);
     setMessageType("success");
     setSelectedChallenge(challenge);
@@ -89,7 +90,9 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
 
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    const isCorrect = answer.toLowerCase().includes("ctf") || answer.toLowerCase().includes("flag");
+    const isCorrect = await completeChallenge({
+      email, username, flagNumber: selectedChallenge.id, flag: answer.trim()
+    });
     
     if (isCorrect) {
       // setChallenges(prev => prev.map(c => 

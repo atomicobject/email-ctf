@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { query, mutation, action } from "./_generated/server";
+import { query, mutation} from "./_generated/server";
 import { api } from "./_generated/api";
 
 // Write your Convex functions in any file inside this directory (`convex`).
@@ -11,8 +11,6 @@ export const upsertUser = mutation({
   args: {
     username: v.string(),
     email: v.string(),
-    challenge1: v.optional(v.boolean()),
-    challenge2: v.optional(v.boolean()),
   },
   handler: async (ctx, args) => {
     const existing = await ctx.db.query("users").filter(q => q.eq(args.email, q.field('email'))).unique();
@@ -21,8 +19,8 @@ export const upsertUser = mutation({
       await ctx.db.insert("users", {
         email: args.email,
         username: args.username,
-        challenge1: args.challenge1 || false,
-        challenge2: args.challenge2 || false
+        challenge1: false,
+        challenge2:  false
       });
       return;
     }
@@ -32,10 +30,6 @@ export const upsertUser = mutation({
       throw new Error("Not the right username");
     }
 
-    await ctx.db.patch(existing._id, {
-      challenge1: args.challenge1 ?? existing.challenge1,
-      challenge2: args.challenge2 ?? existing.challenge2
-    });
   }
 })
 
@@ -68,12 +62,12 @@ export const completeChallenge = mutation({
     });
     const flag = await ctx.db.query("flags").filter(q => q.eq(q.field("challengeNumber"), args.flagNumber)).unique();
     if (!flag) throw new Error("Invalid flag number");
-    if (flag.flag !== args.flag) return false;
+    if (flag.flag !== args.flag) return null;
     // at this point, the flag is correct
     await ctx.db.patch(user._id, {
       challenge1: user.challenge1 ||flag.challengeNumber === 1,
       challenge2: user.challenge2 || flag.challengeNumber === 2 
     });
-    return true;
+    return flag.completeMessage;
   }
 })

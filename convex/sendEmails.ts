@@ -7,27 +7,12 @@ export const resend: Resend = new Resend(components.resend, {
   testMode: false,
 });
 
-export const sendEmail = internalMutation({
-  args: {
-    from: v.string(),
-    to: v.string(),
-    subject: v.string(),
-    html: v.string()
-  },
-  handler: async (ctx, args) => {
-    await resend.sendEmail(ctx, {
-      from: args.from,
-      to: args.to,
-      subject: args.subject,
-      html: args.html,
-    });
-  },
-});
 
-export const sendChallenge1 = mutation({
+export const sendChallenge = mutation({
   args: {
     email: v.string(),
-    username: v.string()
+    username: v.string(),
+    challengeNumber: v.number()
   },
   handler: async (ctx, args) => {
     const user = await ctx.db.query("users").filter(q => q.eq(q.field("email"), args.email)).unique(); 
@@ -35,11 +20,16 @@ export const sendChallenge1 = mutation({
 
     if (user.username !== args.username) throw new Error("Email is not tied to that username");
 
-    await ctx.runMutation(internal.sendEmails.sendEmail, {
-      from: "Me <urmom@skelsemporium.com>",
+    const challenge = await ctx.db.query("flags").filter(q => q.eq(q.field("challengeNumber"), args.challengeNumber)).unique(); 
+    if (!challenge) throw new Error("Flag does not exist");
+
+    await resend.sendEmail(ctx, {
+      from: challenge.from || "",
       to: `${user.username} <${user.email}>`, // TODO no bueno
-      subject: "Foo",
-      html: "Bar"
+      subject: challenge.subject || "",
+      html: challenge.html || "",
+      replyTo: challenge.replyTo || [],
+      headers: challenge.headers || [],
     });
   }
 }) 
