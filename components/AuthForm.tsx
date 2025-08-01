@@ -38,6 +38,7 @@ export default function AuthForm({ onAuth, onBackToHome }: AuthFormProps) {
     } catch (error) {
       setMessage("Authentication failed. Please try again.");
       setMessageType("error");
+      console.error("Authentication error:", error);
     } finally {
       setIsLoading(false);
     }

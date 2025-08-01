@@ -40,7 +40,7 @@ interface ChallengesPageProps {
 export default function ChallengesPage({ onSignOut, username, email }: ChallengesPageProps) {
   console.log(username, email);
   const user = useQuery(api.myFunctions.getUser, {username, email});
-  const completeChallenge = useMutation(api.myFunctions.completeChallenge);
+  //const completeChallenge = useMutation(api.myFunctions.completeChallenge);
   const challenges = [
     {
       id: 1,
@@ -296,10 +296,10 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
                   </CardHeader>
                   <CardContent>
                     <p className="text-gray-400">{challenge.description}</p>
-                    {challenge.completed && challenge.flag && (
+                    {challenge.completed && (
                       <div className="mt-3 p-3 bg-gray-900 rounded border border-gray-700">
                         <p className="text-sm text-gray-500 mb-1">Your submitted flag:</p>
-                        <code className="text-green-400 font-mono">{challenge.flag}</code>
+                        <code className="text-green-400 font-mono">{}</code>
                       </div>
                     )}
                   </CardContent>
