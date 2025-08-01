@@ -20,7 +20,8 @@ export const upsertUser = mutation({
         email: args.email,
         username: args.username,
         challenge1: false,
-        challenge2:  false
+        challenge2:  false,
+        challenge3: false
       });
       return;
     }
@@ -66,7 +67,8 @@ export const completeChallenge = mutation({
     // at this point, the flag is correct
     await ctx.db.patch(user._id, {
       challenge1: user.challenge1 ||flag.challengeNumber === 1,
-      challenge2: user.challenge2 || flag.challengeNumber === 2 
+      challenge2: user.challenge2 || flag.challengeNumber === 2,
+      challenge3: user.challenge3 || flag.challengeNumber === 3
     });
     return flag.completeMessage;
   }
