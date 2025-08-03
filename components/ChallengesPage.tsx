@@ -187,6 +187,11 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
     setIsLoading(false);
   };
 
+  const handleBackToHome = () => {
+    setSelectedChallenge(null);
+    setMessage("");
+  };
+
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case "Easy": return "bg-green-900 text-green-300 border-green-700";
@@ -415,7 +420,7 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
           /* Challenge Submission Interface */
           <div className="space-y-6">
             <Button 
-              onClick={() => setSelectedChallenge(null)}
+              onClick={handleBackToHome}
               className="bg-gray-800 hover:bg-gray-700 text-white"
             >
               ← Back to Challenges
