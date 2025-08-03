@@ -21,7 +21,10 @@ export const upsertUser = mutation({
         username: args.username,
         challenge1: false,
         challenge2:  false,
-        challenge3: false
+        challenge3: false,
+        challenge1EmailSent: false,
+        challenge2EmailSent: false,
+        challenge3EmailSent: false
       });
       return;
     }
@@ -71,5 +74,20 @@ export const completeChallenge = mutation({
       challenge3: user.challenge3 || flag.challengeNumber === 3
     });
     return flag.completeMessage;
+  }
+})
+
+// get all the selected challenges information (compeleteMessage and flag)
+export const getChallenge = query({
+  args: {
+    challengeNumber: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const challenge = await ctx.db.query("flags").filter(q => q.eq(q.field("challengeNumber"), args.challengeNumber)).unique();
+    if (!challenge) throw new Error("Challenge not found");
+    return {
+      completeMessage: challenge.completeMessage,
+      flag: challenge.flag,
+    };
   }
 })

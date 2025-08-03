@@ -13,7 +13,10 @@ export default defineSchema({
     username: v.string(),
     challenge1: v.boolean(),
     challenge2: v.boolean(),
-    challenge3: v.optional(v.boolean())
+    challenge3: v.optional(v.boolean()),
+    challenge1EmailSent: v.optional(v.boolean()),
+    challenge2EmailSent: v.optional(v.boolean()),
+    challenge3EmailSent: v.optional(v.boolean())
   }),
   flags: defineTable({
     flag: v.string(),

@@ -1,6 +1,6 @@
-import { components, internal } from "./_generated/api";
+import { components } from "./_generated/api";
 import { Resend } from "@convex-dev/resend";
-import { internalMutation, mutation } from "./_generated/server";
+import { mutation } from "./_generated/server";
 import { v } from "convex/values";
 
 export const resend: Resend = new Resend(components.resend, {
@@ -31,5 +31,13 @@ export const sendChallenge = mutation({
       replyTo: challenge.replyTo || [],
       headers: challenge.headers || [],
     });
+
+    // Track that email has been sent for this challenge
+    const updateData: Record<string, boolean> = {};
+    if (args.challengeNumber === 1) updateData.challenge1EmailSent = true;
+    if (args.challengeNumber === 2) updateData.challenge2EmailSent = true;
+    if (args.challengeNumber === 3) updateData.challenge3EmailSent = true;
+    
+    await ctx.db.patch(user._id, updateData);
   }
 }) 

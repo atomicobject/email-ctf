@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,7 @@ interface Challenge {
   category: string;
   difficulty: "Easy" | "Medium" | "Hard";
   completed: boolean;
+  emailSent: boolean;
   flag?: string;
 }
 
@@ -47,24 +48,27 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
       title: "Email Header Analysis",
       description: "Analyze the email headers to find the hidden flag. Look for suspicious routing information and authentication records.",
       category: "Headers",
-      difficulty: "Easy",
-      completed: user?.challenge1 ?? false
+      difficulty: "Easy" as const,
+      completed: user?.challenge1 ?? false,
+      emailSent: user?.challenge1EmailSent ?? false
     },
     {
       id: 2, 
       title: "Phishing Detection",
       description: "Identify the phishing indicators in this deceptive email. Check the sender authentication and find the concealed flag.",
       category: "Phishing",
-      difficulty: "Medium",
-      completed: user?.challenge2 ?? false
+      difficulty: "Medium" as const,
+      completed: user?.challenge2 ?? false,
+      emailSent: user?.challenge2EmailSent ?? false
     },
     {
       id: 3, 
       title: "Malware Obfuscation",
-      descrpiton: "Analyze the email for hidden malware. Look for obfuscated Base64-encoded string, and decode it to find the flag.",
+      description: "Analyze the email for hidden malware. Look for obfuscated Base64-encoded string, and decode it to find the flag.",
       category: "Malware",
-      difficulty: "Hard",
+      difficulty: "Hard" as const,
       completed: user?.challenge3 ?? false,
+      emailSent: user?.challenge3EmailSent ?? false
     },
   ];
 
@@ -76,8 +80,40 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
   const [messageType, setMessageType] = useState<"success" | "error" | "info">("info");
   const sendChallenge = useMutation(api.sendEmails.sendChallenge);
   const completeChallenge = useMutation(api.myFunctions.completeChallenge);
+  const challengeData = useQuery(api.myFunctions.getChallenge, {challengeNumber: selectedChallenge?.id ?? 1});
+
+  // Get challenge data for each challenge to show flags
+  const challenge1Data = useQuery(api.myFunctions.getChallenge, {challengeNumber: 1});
+  const challenge2Data = useQuery(api.myFunctions.getChallenge, {challengeNumber: 2});
+  const challenge3Data = useQuery(api.myFunctions.getChallenge, {challengeNumber: 3});
+
+  // Helper function to get flag data for a specific challenge
+  const getChallengeFlag = (challengeId: number) => {
+    switch (challengeId) {
+      case 1: return challenge1Data?.flag;
+      case 2: return challenge2Data?.flag;
+      case 3: return challenge3Data?.flag;
+      default: return null;
+    }
+  };
+
+  // Display the complete message when a completed challenge is selected for review
+  useEffect(() => {
+    if (selectedChallenge && selectedChallenge.completed && challengeData?.completeMessage) {
+      setMessage("🎉 Challenge completed successfully! " + challengeData.completeMessage);
+      setMessageType("success");
+    }
+  }, [selectedChallenge, challengeData]);
 
   const handleSendChallenge = async (challenge: Challenge) => {
+    // If the challenge is completed, show the review message instead of sending email
+    if (challenge.completed) {
+      setSelectedChallenge(challenge);
+      setMessage("🎉 Challenge completed successfully!");
+      setMessageType("success");
+      return;
+    }
+
     setLoadingChallengeId(challenge.id);
     setMessage("");
 
@@ -88,6 +124,14 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
     setMessageType("success");
     setSelectedChallenge(challenge);
     setLoadingChallengeId(null);
+  };
+
+  const handleChallengeCardClick = (challenge: Challenge) => {
+    // Only allow clicking into challenge if email has been sent and challenge is not completed
+    if (challenge.emailSent && !challenge.completed) {
+      setSelectedChallenge(challenge);
+      setMessage("");
+    }
   };
 
   const handleSubmitFlag = async (e: React.FormEvent) => {
@@ -107,7 +151,7 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
       // setChallenges(prev => prev.map(c => 
       //   c.id === selectedChallenge.id ? { ...c, completed: true, flag: answer } : c
       // ));
-      setMessage("🎉 Correct! Challenge completed successfully!");
+      setMessage("🎉 Correct! Challenge completed successfully! " + challengeData?.completeMessage);
       setMessageType("success");
       setAnswer("");
       
@@ -233,6 +277,23 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
                         challenges[1].completed ? 'text-yellow-200' : 'text-gray-500'
                       }`}>Phishing Detection</div>
                     </div>
+
+                    {/* Achievement Card 3 */}
+                    <div className={`rounded-lg p-4 text-center min-w-[120px] transition-all duration-300 ${
+                      challenges[2].completed 
+                        ? 'bg-yellow-900/20 border-yellow-600 shadow-lg shadow-yellow-500/20' 
+                        : 'bg-gray-900 border border-gray-800'
+                    }`}>
+                      <div className={`text-2xl font-bold mb-2 ${
+                        challenges[2].completed ? 'text-yellow-300' : 'text-gray-300'
+                      }`}>Hidden in plain sight</div>
+                      <Trophy className={`h-8 w-8 mx-auto mb-2 ${
+                        challenges[2].completed ? 'text-yellow-400' : 'text-gray-600'
+                      }`} />
+                      <div className={`text-xs ${
+                        challenges[2].completed ? 'text-yellow-200' : 'text-gray-500'
+                      }`}>Malware Detection</div>
+                    </div>
                   </div>
                 </div>
                 {/* Progress Stats */}
@@ -264,7 +325,15 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
             <div className="space-y-4">
               <h2 className="text-2xl font-bold text-gray-100 mb-4">Available Challenges</h2>
               {challenges.map((challenge) => (
-                <Card key={challenge.id} className="bg-gray-950 border-gray-800">
+                <Card 
+                  key={challenge.id} 
+                  className={`bg-gray-950 border-gray-800 transition-all duration-200 ${
+                    challenge.emailSent && !challenge.completed 
+                      ? 'cursor-pointer hover:border-gray-600 hover:bg-gray-900' 
+                      : ''
+                  }`}
+                  onClick={() => handleChallengeCardClick(challenge)}
+                >
                   <CardHeader>
                     <div className="flex justify-between items-start">
                       <div className="space-y-2">
@@ -300,7 +369,12 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
                           ) : (
                             <>
                               <Mail className="h-4 w-4 mr-2" />
-                              {loadingChallengeId === challenge.id ? "Sending..." : "Send Challenge"}
+                              {loadingChallengeId === challenge.id 
+                                ? "Sending..." 
+                                : (challenge.emailSent && !challenge.completed) 
+                                  ? "Resend Email" 
+                                  : "Send Challenge"
+                              }
                             </>
                           )}
                         </Button>
@@ -309,10 +383,17 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
                   </CardHeader>
                   <CardContent>
                     <p className="text-gray-400">{challenge.description}</p>
+                    {challenge.emailSent && !challenge.completed && (
+                      <div className="mt-3 p-2 bg-blue-900/20 rounded border border-blue-700/50">
+                        <p className="text-sm text-blue-300">
+                          💡 Click this card to work on the challenge, or resend the email above
+                        </p>
+                      </div>
+                    )}
                     {challenge.completed && (
                       <div className="mt-3 p-3 bg-gray-900 rounded border border-gray-700">
-                        <p className="text-sm text-gray-500 mb-1">Your submitted flag:</p>
-                        <code className="text-green-400 font-mono">{}</code>
+                        <p className="text-sm text-gray-500 mb-1">Correct flag:</p>
+                        <code className="text-green-400 font-mono">{getChallengeFlag(challenge.id) || 'Loading...'}</code>
                       </div>
                     )}
                   </CardContent>
