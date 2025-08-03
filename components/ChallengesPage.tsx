@@ -45,9 +45,9 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
   const challenges = [
     {
       id: 1,
-      title: "Email Header Analysis",
-      description: "Analyze the email headers to find the hidden flag.",
-      category: "Headers",
+      title: "Email Body Inspection",
+      description: "Analyze the email orginal message to find the hidden flag.",
+      category: "Analysis",
       difficulty: "Easy" as const,
       completed: user?.challenge1 ?? false,
       emailSent: user?.challenge1EmailSent ?? false
@@ -301,7 +301,7 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
                     }`}>
                       <div className={`text-2xl font-bold mb-2 ${
                         challenges[2].completed ? 'text-yellow-300' : 'text-gray-300'
-                      }`}>Hidden in plain sight</div>
+                      }`}>Cryptic Camouflage</div>
                       <Trophy className={`h-8 w-8 mx-auto mb-2 ${
                         challenges[2].completed ? 'text-yellow-400' : 'text-gray-600'
                       }`} />
