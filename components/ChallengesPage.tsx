@@ -46,7 +46,7 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
     {
       id: 1,
       title: "Email Header Analysis",
-      description: "Analyze the email headers to find the hidden flag. Look for suspicious routing information and authentication records.",
+      description: "Analyze the email headers to find the hidden flag.",
       category: "Headers",
       difficulty: "Easy" as const,
       completed: user?.challenge1 ?? false,
@@ -54,9 +54,9 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
     },
     {
       id: 2, 
-      title: "Phishing Detection",
-      description: "Identify the phishing indicators in this deceptive email. Check the sender authentication and find the concealed flag.",
-      category: "Phishing",
+      title: "Header Spoofing",
+      description: "Analyze forged Received headers to uncover the sender’s true IP address.",
+      category: "Phishing Detection",
       difficulty: "Medium" as const,
       completed: user?.challenge2 ?? false,
       emailSent: user?.challenge2EmailSent ?? false
@@ -454,7 +454,7 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
                       <Input
                         id="flag"
                         type="text"
-                        placeholder="CTF{your_flag_here}"
+                        placeholder="CTF-{flag}"
                         value={answer}
                         onChange={(e) => setAnswer(e.target.value)}
                         className="pl-10 bg-gray-900 border-gray-700 text-gray-100 placeholder-gray-500"
