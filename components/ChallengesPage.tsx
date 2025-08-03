@@ -57,19 +57,28 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
       category: "Phishing",
       difficulty: "Medium",
       completed: user?.challenge2 ?? false
-    }
+    },
+    {
+      id: 3, 
+      title: "Malware Obfuscation",
+      descrpiton: "Analyze the email for hidden malware. Look for obfuscated Base64-encoded string, and decode it to find the flag.",
+      category: "Malware",
+      difficulty: "Hard",
+      completed: user?.challenge3 ?? false,
+    },
   ];
 
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null);
   const [answer, setAnswer] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingChallengeId, setLoadingChallengeId] = useState<number | null>(null);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error" | "info">("info");
   const sendChallenge = useMutation(api.sendEmails.sendChallenge);
   const completeChallenge = useMutation(api.myFunctions.completeChallenge);
 
   const handleSendChallenge = async (challenge: Challenge) => {
-    setIsLoading(true);
+    setLoadingChallengeId(challenge.id);
     setMessage("");
 
     // Simulate sending email
@@ -78,7 +87,7 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
     setMessage(`Challenge "${challenge.title}" sent to your email! Check your inbox.`);
     setMessageType("success");
     setSelectedChallenge(challenge);
-    setIsLoading(false);
+    setLoadingChallengeId(null);
   };
 
   const handleSubmitFlag = async (e: React.FormEvent) => {
@@ -137,6 +146,7 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
     switch (category) {
       case "Headers": return "bg-blue-900 text-blue-300 border-blue-700";
       case "Phishing": return "bg-purple-900 text-purple-300 border-purple-700";
+      case "Malware": return "bg-orange-900 text-orange-300 border-orange-700";
       default: return "bg-gray-900 text-gray-300 border-gray-700";
     }
   };
@@ -279,7 +289,7 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
                       <div className="flex items-center gap-2">
                         <Button
                           onClick={() => handleSendChallenge(challenge as Challenge)}
-                          disabled={isLoading}
+                          disabled={loadingChallengeId === challenge.id}
                           className="bg-gray-800 hover:bg-gray-700 text-white"
                         >
                           {challenge.completed ? (
@@ -290,7 +300,7 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
                           ) : (
                             <>
                               <Mail className="h-4 w-4 mr-2" />
-                              {isLoading ? "Sending..." : "Send Challenge"}
+                              {loadingChallengeId === challenge.id ? "Sending..." : "Send Challenge"}
                             </>
                           )}
                         </Button>
@@ -386,17 +396,15 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
             messageType === "error" ? "border-red-600 bg-red-950" :
             "border-blue-600 bg-blue-950"
           }`}>
-            <div className="flex items-center gap-2">
-              {messageType === "success" && <CheckCircle className="h-4 w-4 text-green-400" />}
-              {messageType === "error" && <XCircle className="h-4 w-4 text-red-400" />}
-              <AlertDescription className={
-                messageType === "success" ? "text-green-400" :
-                messageType === "error" ? "text-red-400" :
-                "text-blue-400"
-              }>
-                {message}
-              </AlertDescription>
-            </div>
+            {messageType === "success" && <CheckCircle className="h-4 w-4 !text-green-400" />}
+            {messageType === "error" && <XCircle className="h-4 w-4 !text-red-400" />}
+            <AlertDescription className={
+              messageType === "success" ? "text-green-400" :
+              messageType === "error" ? "text-red-400" :
+              "text-blue-400"
+            }>
+              {message}
+            </AlertDescription>
           </Alert>
         )}
       </div>
