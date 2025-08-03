@@ -267,7 +267,7 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
                     }`}>
                       <div className={`text-2xl font-bold mb-2 ${
                         challenges[0].completed ? 'text-yellow-300' : 'text-gray-300'
-                      }`}>Quippy Name</div>
+                      }`}>Hidden in Plain Sight</div>
                       <Trophy className={`h-8 w-8 mx-auto mb-2 ${
                         challenges[0].completed ? 'text-yellow-400' : 'text-gray-600'
                       }`} />
