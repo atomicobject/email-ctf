@@ -159,26 +159,6 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
       setMessage("🎉 Correct! Challenge completed successfully! " + challengeData?.completeMessage);
       setMessageType("success");
       setAnswer("");
-      
-      // Move to next challenge if available
-      const nextChallenge = challenges.find(c => c.id > selectedChallenge.id && !c.completed);
-      if (nextChallenge) {
-        setTimeout(() => {
-          // setSelectedChallenge(nextChallenge);
-          setMessage("");
-        }, 2000);
-      } else {
-        setTimeout(() => {
-          setSelectedChallenge(null);
-          if (challenges.every(c => c.completed)) {
-            // Show completion message if all challenges are completed
-            setMessage("🏆 Congratulations! You've completed all available challenges!");
-            setMessageType("success");
-          }
-          setMessage("Challenge completed! You can now review your progress or move to the next challenge.");
-          setMessageType("info");
-        }, 10000);
-      }
     } else {
       setMessage("Incorrect flag. Try again! (Hint: look for CTF or FLAG in the email)");
       setMessageType("error");
