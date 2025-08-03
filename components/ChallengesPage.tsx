@@ -170,9 +170,12 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
       } else {
         setTimeout(() => {
           setSelectedChallenge(null);
-          setMessage("🏆 Congratulations! You've completed all available challenges!");
-          setMessageType("success");
-        }, 2000);
+          if (challenges.every(c => c.completed)) {
+            // Show completion message if all challenges are completed
+            setMessage("🏆 Congratulations! You've completed all available challenges!");
+            setMessageType("success");
+          }
+        }, 10000);
       }
     } else {
       setMessage("Incorrect flag. Try again! (Hint: look for CTF or FLAG in the email)");
