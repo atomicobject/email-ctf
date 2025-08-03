@@ -175,6 +175,8 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
             setMessage("🏆 Congratulations! You've completed all available challenges!");
             setMessageType("success");
           }
+          setMessage("Challenge completed! You can now review your progress or move to the next challenge.");
+          setMessageType("info");
         }, 10000);
       }
     } else {
