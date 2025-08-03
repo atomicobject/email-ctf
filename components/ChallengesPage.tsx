@@ -99,8 +99,13 @@ export default function ChallengesPage({ onSignOut, username, email }: Challenge
 
   // Display the complete message when a completed challenge is selected for review
   useEffect(() => {
-    if (selectedChallenge && selectedChallenge.completed && challengeData?.completeMessage) {
-      setMessage("🎉 Challenge completed successfully! " + challengeData.completeMessage);
+    if (selectedChallenge && selectedChallenge.completed) {
+      if (!challengeData?.completeMessage) {
+        setMessage("🎉 Challenge completed successfully!");
+      }
+      else {
+        setMessage("🎉  " + challengeData.completeMessage);
+      }
       setMessageType("success");
     }
   }, [selectedChallenge, challengeData]);
